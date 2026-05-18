@@ -94,7 +94,14 @@ GET  /api/reservas
 POST /api/reservas
 ```
 
+## Mockup / Diseño
+
+El diseño del flujo (interfaz de reservas) se puede observar en el siguiente link de Figma:
+
+https://www.figma.com/make/mfgZ55j06L4TCwutTIXyxz/Interactive-reservation-mockup?t=G2NSFEatHQB9yo2Z-20&fullscreen=1&preview-route=%2Freservas
+
 ## Documentacion
+
 
 - `docs/adr/ADR-001.md`: decision de framework web Flask.
 - `docs/adr/ADR-002.md`: decision de servidor WSGI Gunicorn.
