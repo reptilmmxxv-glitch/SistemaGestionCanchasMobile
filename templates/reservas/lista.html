@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Lista de reservas</h2>
+    <a href="{{ url_for('crear_reserva') }}" class="btn btn-primary">Nueva reserva</a>
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <h5 class="mb-3">Disponibilidad basica</h5>
+        <form method="GET" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label for="fecha" class="form-label">Fecha</label>
+                <input type="date" class="form-control" id="fecha" name="fecha" value="{{ fecha_busqueda }}">
+            </div>
+            <div class="col-md-4">
+                <label for="hora" class="form-label">Hora</label>
+                <input type="time" class="form-control" id="hora" name="hora" value="{{ hora_busqueda }}">
+            </div>
+            <div class="col-md-4 d-flex gap-2">
+                <button type="submit" class="btn btn-outline-primary">Consultar</button>
+                <a href="{{ url_for('listar_reservas') }}" class="btn btn-outline-secondary">Limpiar</a>
+            </div>
+        </form>
+
+        {% if fecha and hora %}
+            <hr>
+            <p><strong>Fecha:</strong> {{ fecha.strftime('%d-%m-%Y') }} <strong>Hora:</strong> {{ hora }}</p>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="border rounded p-3 h-100 bg-light">
+                        <h6>Canchas ocupadas</h6>
+                        {% if reservas_ocupadas %}
+                            <ul class="mb-0">
+                                {% for reserva in reservas_ocupadas %}
+                                    <li>{{ reserva.cancha.nombre }} - {{ reserva.nombre_cliente }} ({{ reserva.estado }})</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="mb-0">No hay reservas activas para ese bloque.</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="border rounded p-3 h-100 bg-light">
+                        <h6>Canchas disponibles</h6>
+                        {% if canchas_disponibles %}
+                            <ul class="mb-0">
+                                {% for cancha in canchas_disponibles %}
+                                    <li>{{ cancha.nombre }} - {{ cancha.tipo_deporte }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="mb-0">No hay canchas libres para ese bloque.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        {% if reservas %}
+            <div class="table-responsive">
+                <table class="table table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Cancha</th>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                            <th>Horas</th>
+                            <th>Precio Total</th>
+                            <th>Estado</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reserva in reservas %}
+                        <tr>
+                            <td>{{ reserva.id }}</td>
+                            <td>
+                                {{ reserva.nombre_cliente }}<br>
+                                <small>{{ reserva.correo_cliente }}</small>
+                            </td>
+                            <td>{{ reserva.cancha.nombre }}</td>
+                            <td>{{ reserva.fecha.strftime('%d-%m-%Y') }}</td>
+                            <td>{{ reserva.hora }}</td>
+                            <td>{{ reserva.horas_arriendadas }}</td>
+                            <td>${{ "{:,.0f}".format(reserva.precio_total) }}</td>
+                            <td>
+                                {% if reserva.estado == 'confirmada' %}
+                                    <span class="badge text-bg-success">{{ reserva.estado }}</span>
+                                {% elif reserva.estado == 'cancelada' %}
+                                    <span class="badge text-bg-secondary">{{ reserva.estado }}</span>
+                                {% else %}
+                                    <span class="badge text-bg-warning">{{ reserva.estado }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                <a href="{{ url_for('editar_reserva', id=reserva.id) }}" class="btn btn-sm btn-warning">Editar</a>
+                                <form action="{{ url_for('eliminar_reserva', id=reserva.id) }}" method="POST" class="d-inline" onsubmit="return confirm('Seguro que deseas eliminar esta reserva?');">
+                                    <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="mb-0">No hay reservas registradas.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

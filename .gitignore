@@ -1,0 +1,9 @@
+venv/
+__pycache__/
+*.pyc
+instance/
+*.db
+
+Documentos/
+mobile-ionic/node_modules/
+mobile-ionic/dist/

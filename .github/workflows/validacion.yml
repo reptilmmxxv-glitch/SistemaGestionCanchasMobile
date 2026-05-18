@@ -1,0 +1,60 @@
+name: Validacion MVP Flask Ionic
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar dependencias backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Validar backend Flask
+        run: |
+          python -m py_compile app.py
+          python - <<'PY'
+          import app
+          client = app.app.test_client()
+          assert client.get("/api/health").status_code == 200
+          assert client.get("/api/canchas").status_code == 200
+          assert client.get("/api/reservas").status_code == 200
+          PY
+
+      - name: Configurar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: mobile-ionic/package-lock.json
+
+      - name: Instalar dependencias mobile
+        working-directory: mobile-ionic
+        run: npm ci
+
+      - name: Compilar Ionic
+        working-directory: mobile-ionic
+        run: npm run build
+
+      - name: Verificar documentacion minima
+        run: |
+          test -f README.md
+          test -f Procfile
+          test -f docs/adr/ADR-001.md
+          test -f docs/adr/ADR-002.md
+          test -f docs/adr/ADR-003.md
+          test -f docs/adr/ADR-004.md

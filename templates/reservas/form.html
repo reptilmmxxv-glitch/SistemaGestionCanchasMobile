@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h2 class="mb-4">
+            {% if reserva %}
+                Editar reserva
+            {% else %}
+                Crear reserva
+            {% endif %}
+        </h2>
+
+        <form method="POST">
+            <div class="mb-3">
+                <label for="nombre_cliente" class="form-label">Nombre del cliente</label>
+                <input type="text" class="form-control" id="nombre_cliente" name="nombre_cliente" required value="{{ form_data.nombre_cliente if form_data else reserva.nombre_cliente if reserva else '' }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="correo_cliente" class="form-label">Correo del cliente</label>
+                <input type="email" class="form-control" id="correo_cliente" name="correo_cliente" required value="{{ form_data.correo_cliente if form_data else reserva.correo_cliente if reserva else '' }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="telefono_cliente" class="form-label">Telefono del cliente</label>
+                <input type="text" class="form-control" id="telefono_cliente" name="telefono_cliente" required value="{{ form_data.telefono_cliente if form_data else reserva.telefono_cliente if reserva else '' }}">
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label for="fecha" class="form-label">Fecha</label>
+                    <input type="date" class="form-control" id="fecha" name="fecha" required value="{{ form_data.fecha if form_data else reserva.fecha.strftime('%Y-%m-%d') if reserva else '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="hora" class="form-label">Hora</label>
+                    <input type="time" class="form-control" id="hora" name="hora" required value="{{ form_data.hora if form_data else reserva.hora if reserva else '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="horas_arriendadas" class="form-label">Horas</label>
+                    <select class="form-select" id="horas_arriendadas" name="horas_arriendadas" required>
+                        {% set horas_actual = form_data.horas_arriendadas if form_data else reserva.horas_arriendadas if reserva else '1' %}
+                        {% for i in range(1, 9) %}
+                            <option value="{{ i }}" {% if horas_actual|string == i|string %}selected{% endif %}>{{ i }} hora{{ 's' if i > 1 else '' }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="estado" class="form-label">Estado</label>
+                    <select class="form-select" id="estado" name="estado" required>
+                        {% set estado_actual = form_data.estado if form_data else reserva.estado if reserva else 'pendiente' %}
+                        {% for estado in estados %}
+                            <option value="{{ estado }}" {% if estado_actual == estado %}selected{% endif %}>{{ estado|capitalize }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-3 mt-3">
+                <label for="cancha_id" class="form-label">Cancha</label>
+                {% set cancha_actual = form_data.cancha_id if form_data else reserva.cancha_id if reserva else '' %}
+                <select class="form-select" id="cancha_id" name="cancha_id" required>
+                    <option value="">Selecciona una cancha</option>
+                    {% for cancha in canchas %}
+                        <option value="{{ cancha.id }}" {% if cancha_actual|string == cancha.id|string %}selected{% endif %}>
+                            {{ cancha.nombre }} - {{ cancha.tipo_deporte }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="observaciones" class="form-label">Observaciones</label>
+                <textarea class="form-control" id="observaciones" name="observaciones" rows="3">{{ form_data.observaciones if form_data else reserva.observaciones if reserva else '' }}</textarea>
+            </div>
+
+            <button type="submit" class="btn btn-success">{% if reserva %}Actualizar{% else %}Guardar{% endif %}</button>
+            <a href="{{ url_for('listar_reservas') }}" class="btn btn-secondary">Volver</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Lista de canchas</h2>
+    <a href="{{ url_for('crear_cancha') }}" class="btn btn-primary">Nueva cancha</a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        {% if canchas %}
+            <div class="table-responsive">
+                <table class="table table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Tipo</th>
+                            <th>Ubicacion</th>
+                            <th>Precio por hora</th>
+                            <th>Disponible</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cancha in canchas %}
+                        <tr>
+                            <td>{{ cancha.id }}</td>
+                            <td>{{ cancha.nombre }}</td>
+                            <td>{{ cancha.tipo_deporte }}</td>
+                            <td>{{ cancha.ubicacion }}</td>
+                            <td>${{ "{:,.0f}".format(cancha.precio_hora_calculado) }}</td>
+                            <td>
+                                {% if cancha.disponible %}
+                                    <span class="badge text-bg-success">Si</span>
+                                {% else %}
+                                    <span class="badge text-bg-secondary">No</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                <a href="{{ url_for('editar_cancha', id=cancha.id) }}" class="btn btn-sm btn-warning">Editar</a>
+                                <form action="{{ url_for('eliminar_cancha', id=cancha.id) }}" method="POST" class="d-inline" onsubmit="return confirm('Seguro que deseas eliminar esta cancha?');">
+                                    <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="mb-0">No hay canchas registradas.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

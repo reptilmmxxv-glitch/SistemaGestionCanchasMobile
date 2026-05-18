@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h2 class="mb-4">
+            {% if cancha %}
+                Editar cancha
+            {% else %}
+                Crear cancha
+            {% endif %}
+        </h2>
+
+        <form method="POST">
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" required value="{{ form_data.nombre if form_data else cancha.nombre if cancha else '' }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="tipo_deporte" class="form-label">Tipo de deporte</label>
+                <select class="form-select" id="tipo_deporte" name="tipo_deporte" required onchange="updatePrecio()">
+                    <option value="">Selecciona una opcion</option>
+                    {% for tipo in tipos_deporte %}
+                        {% set valor_actual = form_data.tipo_deporte if form_data else cancha.tipo_deporte if cancha else '' %}
+                        <option value="{{ tipo }}" {% if valor_actual == tipo %}selected{% endif %}>{{ tipo }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="ubicacion" class="form-label">Ubicacion o descripcion</label>
+                <input type="text" class="form-control" id="ubicacion" name="ubicacion" required value="{{ form_data.ubicacion if form_data else cancha.ubicacion if cancha else '' }}">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Precio por hora (calculado automaticamente)</label>
+                <input type="text" class="form-control" id="precio_display" readonly value="{% if cancha %}${{ '{:,.0f}'.format(cancha.precio_hora_calculado) }}{% else %}Selecciona tipo de deporte{% endif %}">
+                <small class="form-text text-muted">Futbol: $22,000 | Otros deportes: $15,000</small>
+            </div>
+
+            <div class="mb-3">
+                <label for="disponible" class="form-label">Disponible</label>
+                {% if form_data %}
+                    {% set disponibilidad_actual = form_data.disponible %}
+                {% elif cancha and cancha.disponible %}
+                    {% set disponibilidad_actual = '1' %}
+                {% elif cancha %}
+                    {% set disponibilidad_actual = '0' %}
+                {% else %}
+                    {% set disponibilidad_actual = '1' %}
+                {% endif %}
+                <select class="form-select" id="disponible" name="disponible">
+                    <option value="1" {% if disponibilidad_actual == '1' %}selected{% endif %}>Si</option>
+                    <option value="0" {% if disponibilidad_actual == '0' %}selected{% endif %}>No</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-success">{% if cancha %}Actualizar{% else %}Guardar{% endif %}</button>
+            <a href="{{ url_for('listar_canchas') }}" class="btn btn-secondary">Volver</a>
+        </form>
+    </div>
+</div>
+
+<script>
+function updatePrecio() {
+    const tipoSelect = document.getElementById('tipo_deporte');
+    const precioDisplay = document.getElementById('precio_display');
+    const tipo = tipoSelect.value.toLowerCase();
+    
+    if (tipo === 'futbol') {
+        precioDisplay.value = '$22,000';
+    } else if (tipo) {
+        precioDisplay.value = '$15,000';
+    } else {
+        precioDisplay.value = 'Selecciona tipo de deporte';
+    }
+}
+
+// Actualizar precio al cargar la página si ya hay un valor seleccionado
+document.addEventListener('DOMContentLoaded', updatePrecio);
+</script>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">Canchas registradas</h5>
+                <p class="display-6 mb-0">{{ total_canchas }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">Reservas registradas</h5>
+                <p class="display-6 mb-0">{{ total_reservas }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5 class="card-title">Pendientes</h5>
+                <p class="display-6 mb-0">{{ reservas_pendientes }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h2 class="mb-3">Sistema web de reservas de canchas</h2>
+        <p class="mb-4">
+            Aplicacion para registrar canchas, crear reservas y revisar disponibilidad basica por fecha y horario.
+        </p>
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="{{ url_for('listar_canchas') }}" class="btn btn-primary">Administrar canchas</a>
+            <a href="{{ url_for('listar_reservas') }}" class="btn btn-outline-primary">Administrar reservas</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
