@@ -1,14 +1,14 @@
 [build]
-  base = "mobile-ionic"
-  command = "npm install && npm run build"
-  publish = "dist"
+base = "mobile-ionic"
+command = "npm install && npm run build"
+publish = "dist"
 
-# SPA fallback: solo para rutas (no tocar archivos reales)
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-  force = true
+from = "/*"
+to = "/index.html"
+status = 200
+force = true
+
 
 
 
