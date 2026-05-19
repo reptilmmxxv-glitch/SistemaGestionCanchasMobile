@@ -41,7 +41,7 @@ function App() {
 
             {/* fallback */}
             <Route>
-              <Redirect to="/canchas" />
+              <Redirect to="/login" />
             </Route>
           </IonRouterOutlet>
           <IonTabBar slot="bottom">
