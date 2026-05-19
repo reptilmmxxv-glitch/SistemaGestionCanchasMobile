@@ -25,8 +25,8 @@ export default function LoginPage() {
 
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
-    username: 'admin',
-    password: 'admin'
+    username: '',
+    password: ''
   });
 
   function actualizar(campo: string, valor: string) {
