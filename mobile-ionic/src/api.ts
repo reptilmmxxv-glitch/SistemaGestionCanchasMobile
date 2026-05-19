@@ -35,7 +35,7 @@ export type NuevaReserva = {
   cancha_id: number;
 };
 
-const API_BASE = (import.meta as any).env?.VITE_API_BASE_URL ?? 'http://localhost:5000/api';
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const token = getToken();

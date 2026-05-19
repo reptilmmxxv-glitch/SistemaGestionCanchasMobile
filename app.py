@@ -726,6 +726,25 @@ def calendario():
     )
 
 
+@app.route("/api/login", methods=["POST", "OPTIONS"])
+def api_login():
+    """API endpoint para login de la app móvil. Retorna un token JWT."""
+    if request.method == "OPTIONS":
+        return "", 204
+    
+    datos = request.get_json(silent=True) or {}
+    username = str(datos.get("username", "")).strip()
+    password = str(datos.get("password", "")).strip()
+    
+    if username == ADMIN_USERNAME and check_password_hash(ADMIN_PASSWORD_HASH, password):
+        # Generar un token simple (en producción usar JWT)
+        import secrets
+        token = secrets.token_urlsafe(32)
+        return jsonify({"token": token, "message": "Login exitoso"})
+    
+    return jsonify({"error": "Usuario o contraseña incorrecta."}), 401
+
+
 @app.route("/api/health")
 def api_health():
     return jsonify({"status": "ok", "servicio": "arriendo-canchas"})
