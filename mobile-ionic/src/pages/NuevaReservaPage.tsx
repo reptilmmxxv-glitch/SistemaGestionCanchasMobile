@@ -67,8 +67,11 @@ export default function NuevaReservaPage() {
       await present({ message: 'Reserva creada correctamente.', duration: 1800, color: 'success' });
       history.push('/reservas');
     } catch (err: any) {
+      // Para 401/403, el backend responde con JSON { error: ... }
       const msg = err instanceof Error ? err.message : String(err ?? '');
-      if (msg.toLowerCase().includes('no autorizado') || msg.includes('401') || msg.includes('403')) {
+
+      // Forzamos redirect ante cualquier indicio de auth fallida.
+      if (msg.toLowerCase().includes('no autorizado') || msg.toLowerCase().includes('no fue posible completar') || msg.includes('401') || msg.includes('403')) {
         clearToken();
         window.location.href = '/login';
         return;
