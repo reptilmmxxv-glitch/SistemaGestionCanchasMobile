@@ -38,8 +38,8 @@ db = SQLAlchemy(app)
 def agregar_cabeceras_cors(response):
     """Permite consumir la API desde la aplicacion Ionic en desarrollo."""
     response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
-    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS, PUT, DELETE"
     return response
 
 # Config auth
