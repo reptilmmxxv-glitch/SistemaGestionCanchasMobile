@@ -38,7 +38,9 @@ function App() {
             <Route exact path="/reservas" component={ReservasPage} />
             <Route exact path="/reservas/nueva" component={NuevaReservaPage} />
             <Route exact path="/login" component={LoginPage} />
-            <Route exact path="/">
+
+            {/* fallback */}
+            <Route>
               <Redirect to="/canchas" />
             </Route>
           </IonRouterOutlet>
