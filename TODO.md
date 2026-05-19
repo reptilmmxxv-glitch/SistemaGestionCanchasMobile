@@ -1,4 +1,6 @@
-- [ ] Agregar link al mockup de Figma al README
-- [ ] Commit con mensaje "Mockup README"
-- [ ] Verificar que el README contiene el link correctamente
+- [ ] (pendiente) Crear auth para API móvil: login admin + token
+- [ ] Proteger endpoints /api/canchas y /api/reservas (GET/POST)
+- [ ] Implementar UI login en Ionic (volver después)
+- [ ] Actualizar mobile-ionic/src/api.ts para enviar Authorization: Bearer <token>
+- [ ] Rebuild Netlify y verificar
 

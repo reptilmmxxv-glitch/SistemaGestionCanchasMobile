@@ -1,3 +1,5 @@
+import { getToken } from './auth';
+
 export type Cancha = {
   id: number;
   nombre: string;
@@ -33,7 +35,7 @@ export type NuevaReserva = {
   cancha_id: number;
 };
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:5000/api';
+const API_BASE = (import.meta as any).env?.VITE_API_BASE_URL ?? 'http://localhost:5000/api';
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE}${path}`, {

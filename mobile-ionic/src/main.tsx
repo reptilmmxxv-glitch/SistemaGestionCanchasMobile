@@ -17,6 +17,7 @@ import { calendarOutline, footballOutline, listOutline } from 'ionicons/icons';
 import CanchasPage from './pages/CanchasPage';
 import ReservasPage from './pages/ReservasPage';
 import NuevaReservaPage from './pages/NuevaReservaPage';
+import LoginPage from './pages/LoginPage';
 
 import '@ionic/react/css/core.css';
 import '@ionic/react/css/normalize.css';
@@ -36,6 +37,7 @@ function App() {
             <Route exact path="/canchas" component={CanchasPage} />
             <Route exact path="/reservas" component={ReservasPage} />
             <Route exact path="/reservas/nueva" component={NuevaReservaPage} />
+            <Route exact path="/login" component={LoginPage} />
             <Route exact path="/">
               <Redirect to="/canchas" />
             </Route>
