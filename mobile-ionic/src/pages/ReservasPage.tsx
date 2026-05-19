@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+
+import { clearToken, getToken } from '../auth';
 import {
   IonBadge,
   IonCard,
@@ -27,9 +29,28 @@ export default function ReservasPage() {
 
   async function cargarReservas() {
     setError('');
+
+    // Si el backend pide token y no lo tenemos, mandamos a login.
+    if (!getToken()) {
+      try {
+        clearToken();
+      } catch {
+        // ignore
+      }
+      window.location.href = '/login';
+      return;
+    }
+
     try {
       setReservas(await obtenerReservas());
-    } catch (err) {
+    } catch (err: any) {
+      const msg = err instanceof Error ? err.message : String(err ?? '');
+      if (msg.toLowerCase().includes('no autorizado') || msg.includes('401') || msg.includes('403')) {
+        clearToken();
+        window.location.href = '/login';
+        return;
+      }
+
       setError(err instanceof Error ? err.message : 'Error al cargar reservas.');
     } finally {
       setLoading(false);

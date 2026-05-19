@@ -18,6 +18,8 @@ import {
 import { useHistory } from 'react-router-dom';
 
 import { Cancha, crearReserva, obtenerCanchas } from '../api';
+import { clearToken, getToken } from '../auth';
+
 
 const hoy = new Date().toISOString().slice(0, 10);
 
@@ -52,11 +54,26 @@ export default function NuevaReservaPage() {
   async function guardar(event: FormEvent) {
     event.preventDefault();
     setGuardando(true);
+
+    if (!getToken()) {
+      clearToken();
+      window.location.href = '/login';
+      setGuardando(false);
+      return;
+    }
+
     try {
       await crearReserva(form);
       await present({ message: 'Reserva creada correctamente.', duration: 1800, color: 'success' });
       history.push('/reservas');
-    } catch (err) {
+    } catch (err: any) {
+      const msg = err instanceof Error ? err.message : String(err ?? '');
+      if (msg.toLowerCase().includes('no autorizado') || msg.includes('401') || msg.includes('403')) {
+        clearToken();
+        window.location.href = '/login';
+        return;
+      }
+
       await present({
         message: err instanceof Error ? err.message : 'No fue posible crear la reserva.',
         duration: 2500,

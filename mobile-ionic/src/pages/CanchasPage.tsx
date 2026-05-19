@@ -17,8 +17,11 @@ import {
   IonToolbar,
   RefresherEventDetail
 } from '@ionic/react';
+import { useHistory } from 'react-router-dom';
 
 import { Cancha, obtenerCanchas } from '../api';
+import { clearToken, getToken } from '../auth';
+
 
 export default function CanchasPage() {
   const [canchas, setCanchas] = useState<Cancha[]>([]);
@@ -27,9 +30,29 @@ export default function CanchasPage() {
 
   async function cargarCanchas() {
     setError('');
+
+    // Si el backend pide token y no lo tenemos, mandamos a login.
+    if (!getToken()) {
+      try {
+        clearToken();
+      } catch {
+        // ignore
+      }
+      window.location.href = '/login';
+      return;
+    }
+
     try {
       setCanchas(await obtenerCanchas());
-    } catch (err) {
+    } catch (err: any) {
+      // Si falló auth, limpiamos token y redirigimos.
+      const msg = err instanceof Error ? err.message : String(err ?? '');
+      if (msg.toLowerCase().includes('no autorizado') || msg.includes('401') || msg.includes('403')) {
+        clearToken();
+        window.location.href = '/login';
+        return;
+      }
+
       setError(err instanceof Error ? err.message : 'Error al cargar canchas.');
     } finally {
       setLoading(false);
