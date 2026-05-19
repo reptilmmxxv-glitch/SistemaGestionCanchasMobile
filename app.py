@@ -9,7 +9,12 @@ from flask_cors import CORS
 from functools import wraps
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "*"}})
+CORS(app, resources={r"/*": {"origins": "*"}})
+
+@app.before_request
+def handle_options():
+    if request.method == "OPTIONS":
+        return "", 200
 
 # asegura que la carpeta instance exista para la base de datos SQLite
 os.makedirs(app.instance_path, exist_ok=True)
