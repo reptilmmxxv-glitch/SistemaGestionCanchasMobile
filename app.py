@@ -5,9 +5,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from flask import Flask, flash, jsonify, redirect, render_template, request, url_for, session
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 from functools import wraps
 
 app = Flask(__name__)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # asegura que la carpeta instance exista para la base de datos SQLite
 os.makedirs(app.instance_path, exist_ok=True)
@@ -23,7 +25,6 @@ elif database_url.startswith("postgres://"):
 app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = "clave-secreta-ejemplo"
-app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "clave-secreta-ejemplo")
 
 db = SQLAlchemy(app)
 
@@ -36,15 +37,9 @@ def agregar_cabeceras_cors(response):
     response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
     return response
 
-# Config auth (web + API)
+# Config auth
 ADMIN_USERNAME = 'admin'
 ADMIN_PASSWORD_HASH = generate_password_hash('admin')
-
-# Token simple (sin JWT) para proteger API móvil.
-# Se emite tras /api/login y se valida en cada request.
-ADMIN_API_TOKENS = set()
-
-
 
 ESTADOS_RESERVA = ["pendiente", "confirmada", "cancelada"]
 TIPOS_DEPORTE = ["Futbol", "Padel", "Baby futbol", "Multicancha"]
@@ -260,28 +255,7 @@ def respuesta_error(mensaje, estado=400):
     return jsonify({"error": mensaje}), estado
 
 
-def _extraer_bearer_token():
-    auth_header = request.headers.get('Authorization', '')
-    if not auth_header:
-        return None
-    if auth_header.lower().startswith('bearer '):
-        return auth_header[7:].strip() or None
-    return None
-
-
-def api_login_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        token = _extraer_bearer_token()
-        if not token or token not in ADMIN_API_TOKENS:
-            return respuesta_error('No autorizado. Debes enviar Bearer token.', 401)
-        return f(*args, **kwargs)
-
-    return decorated
-
-
 with app.app_context():
-
     db.create_all()
 
     if Cancha.query.count() == 0:
@@ -757,41 +731,14 @@ def api_health():
     return jsonify({"status": "ok", "servicio": "arriendo-canchas"})
 
 
-@app.route("/api/login", methods=["POST", "OPTIONS"])
-def api_login():
-    if request.method == "OPTIONS":
-        return "", 204
-
-    datos = request.get_json(silent=True) or {}
-    username = str(datos.get('username', '')).strip()
-    password = str(datos.get('password', '')).strip()
-
-    if username != ADMIN_USERNAME:
-        return respuesta_error('Credenciales invalidas.', 401)
-
-    if not check_password_hash(ADMIN_PASSWORD_HASH, password):
-        return respuesta_error('Credenciales invalidas.', 401)
-
-    # token simple aleatorio
-    import secrets
-
-    token = secrets.token_urlsafe(32)
-    ADMIN_API_TOKENS.add(token)
-
-    return jsonify({"token": token})
-
-
 @app.route("/api/canchas")
-@api_login_required
 def api_listar_canchas():
     canchas = Cancha.query.order_by(Cancha.nombre.asc()).all()
     return jsonify([serializar_cancha(cancha) for cancha in canchas])
 
 
 @app.route("/api/reservas", methods=["GET", "POST", "OPTIONS"])
-@api_login_required
 def api_reservas():
-
     if request.method == "OPTIONS":
         return "", 204
 
