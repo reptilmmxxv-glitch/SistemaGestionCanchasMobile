@@ -100,6 +100,11 @@ El diseño del flujo (interfaz de reservas) se puede observar en el siguiente li
 
 https://www.figma.com/make/mfgZ55j06L4TCwutTIXyxz/Interactive-reservation-mockup?t=G2NSFEatHQB9yo2Z-20&fullscreen=1&preview-route=%2Freservas
 
+## Despliegues
+
+- **Versión Web:** [https://sistemagestioncanchasmobile.onrender.com/login](https://sistemagestioncanchasmobile.onrender.com/login)
+- **Versión Mobile:** [https://sistema-gestion-canchas-mobile.vercel.app/](https://sistema-gestion-canchas-mobile.vercel.app/)
+
 ## Documentacion
 
 
@@ -107,3 +112,6 @@ https://www.figma.com/make/mfgZ55j06L4TCwutTIXyxz/Interactive-reservation-mockup
 - `docs/adr/ADR-002.md`: decision de servidor WSGI Gunicorn.
 - `docs/adr/ADR-003.md`: decision de despliegue backend.
 - `docs/adr/ADR-004.md`: decision de Ionic React y Capacitor.
+
+## Nota
+Se agregó esta sección de prueba al README, pero al ejecutar `git status` local no se refleja el cambio (posible caché/ignorado/commit previo).
